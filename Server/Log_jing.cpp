@@ -1,36 +1,51 @@
-#define _CRT_SECURE_NO_WARNINGS 1
 #include "Log_jing.h"
 
+
+char tmpTime[32] = { 0 };
+Log_jing* sysLogJing = NULL;
+
 Log_jing::Log_jing(const char *filename)
-	:l_filename(new char[strlen(filename) + 7])
 {
-	strcpy(l_filename, "./log/");
-	strcpy(l_filename + 6, filename);
-	_mkdir("./log");
-	fout.open(l_filename, ios::out | ios::app);
+	getCurrentTime();
+	string filePath = string(filename) + "_" + tmpTime + ".log";
+	fout.open(filePath, ios::out | ios::app);
 }
 Log_jing::~Log_jing() {
 	if (fout.is_open()) {
 		fout.close();
 	}
-	delete[] l_filename;
 }
-void Log_jing::Write(const char* str, int num) {
-	time_t tm = time(0);
-	char tmp[32] = { NULL };
-	strftime(tmp, sizeof(tmp), "%Y-%m-%d %H:%M:%S", localtime(&tm));
-	fout << tmp << '\t' << str << '\t' << num << endl;
+
+// Three log types
+ofstream& Log_jing::debug(string func){
+	getCurrentTime();
+	fout << "[" << tmpTime << " " << func << "][debug]";
+	return fout;
 }
-void Log_jing::Write(const char* str, const char* funcName, int errnum) {
-	time_t tm = time(0);
-	char tmp[32] = { NULL };
-	strftime(tmp, sizeof(tmp), "%Y-%m-%d %H:%M:%S", localtime(&tm));
-	fout << tmp << '\t';
-	if (errnum != 0) {
-		fout << "Error: " << errnum << '\t';
-	}
-	fout << str;
-	if (funcName != NULL) {
-		fout << "\tFunc: " << funcName << endl;
-	}
+ofstream& Log_jing::warn(string func){
+	getCurrentTime();
+	fout << "[" << tmpTime << " " << func << "][ warn]";
+	return fout;
+}
+ofstream& Log_jing::error(string func){
+	getCurrentTime();
+	fout << "[" << tmpTime << " " << func << "][error]";
+	return fout;
+}
+// Whether the file creation was successful
+bool Log_jing::isFileError(){
+	return !fout;
+}
+// Get current time to write log
+void Log_jing::getCurrentTime(){
+	time_t myTime = time(NULL);
+	strftime(tmpTime, sizeof(tmpTime), "%Y_%m_%d_%H_%M_%S", localtime(&myTime));
+}
+
+bool InitLog(const char *filename){
+	sysLogJing = new Log_jing(filename);
+	return !sysLogJing->isFileError();
+}
+void CloseLog(){
+	delete sysLogJing;
 }

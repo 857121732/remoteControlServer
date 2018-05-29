@@ -1,0 +1,6 @@
+[2018_05_22_16_34_05 JingSocket::JingSocket][debug]Socket bind!
+[2018_05_22_16_34_05 JingSocket::JingSocket][debug]Make listen socket: socket=668
+[2018_05_22_16_34_11 JingSocket::AcceptNewConn][debug]Connect success: sock=1372
+[2018_05_22_16_35_11 JingSocket::CloseConnection][debug]Close socket: sock=1372
+[2018_05_22_16_35_23 JingSocket::AcceptNewConn][debug]Connect success: sock=708
+[2018_05_22_16_35_48 JingSocket::AcceptNewConn][debug]Connect success: sock=2216
